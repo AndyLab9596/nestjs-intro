@@ -39,11 +39,7 @@ export class PostsService {
     const foundPost = await this.postRepository.findOneBy({ id });
 
     if (foundPost) {
-      await this.postRepository.delete({ id: foundPost.id });
-
-      if (foundPost?.metaOption.id) {
-        await this.metaOptionRepository.delete(foundPost.metaOption.id);
-      }
+      await this.postRepository.delete({ id });
     }
 
     return { deleted: true, id };
