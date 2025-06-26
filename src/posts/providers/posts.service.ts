@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from '../post.entity';
 import { MetaOption } from 'src/meta-options/meta-option.entity';
 import { TagsService } from 'src/tags/providers/tags.service';
+import { PatchPostDto } from '../dtos/patch-post.dto';
 
 @Injectable()
 export class PostsService {
@@ -54,5 +55,39 @@ export class PostsService {
     }
 
     return { deleted: true, id };
+  }
+
+  public async update(patchPostDto: PatchPostDto) {
+    const tagToBeUpdated = await this.tagsService.findMultipleTags(
+      patchPostDto.tags,
+    );
+
+    const foundPost = await this.postRepository.findOneBy({
+      id: patchPostDto.id,
+    });
+
+    // const metaOptionToBeUpdated = await this.metaOptionRepository.findOneBy({
+    //   id: patchPostDto.metaOptionId,
+    // });
+
+    foundPost.tags = tagToBeUpdated;
+    foundPost.title = patchPostDto.title ?? foundPost.title;
+    foundPost.content = patchPostDto.content ?? foundPost.content;
+    foundPost.status = patchPostDto.status ?? foundPost.status;
+    foundPost.postType = patchPostDto.postType ?? foundPost.postType;
+    foundPost.slug = patchPostDto.slug ?? foundPost.slug;
+    foundPost.featuredImageUrl =
+      patchPostDto.featuredImageUrl ?? foundPost.featuredImageUrl;
+    foundPost.publishOn = patchPostDto.publishOn ?? foundPost.publishOn;
+
+    // Object.assign(foundPost, {
+    //   ...patchPostDto,
+    //   tags: tagToBeUpdated,
+    //   // metaOption: metaOptionToBeUpdated,
+    // });
+
+    const postUpdated = this.postRepository.save(foundPost);
+
+    return postUpdated;
   }
 }

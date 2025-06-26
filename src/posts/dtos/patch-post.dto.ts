@@ -10,4 +10,7 @@ export class PatchPostDto extends PartialType(CreatePostDto) {
   @IsInt()
   @IsNotEmpty()
   id: number;
+
+  @IsInt()
+  metaOptionId: number;
 }

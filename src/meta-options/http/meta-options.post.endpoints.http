@@ -2,5 +2,5 @@ POST http://localhost:3000/meta-options
 Content-Type: application/json
 
 {
-  "metaValue": "{\"sidebarEnabled\": true, \"footerActive\": true}"
+  "metaValue": "{\"sidebarEnabled\": false, \"footerActive\": false}"
 }

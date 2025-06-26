@@ -2,6 +2,12 @@ PATCH http://localhost:3000/posts
 Content-Type: application/json
 
 {
-  "id": 1234,
-  "postType": "post"
+  "id": 9,
+  "title": "NestJS learning",
+  "status": "draft",
+  "content": "test content",
+ 
+  "postType": "post",
+  "tags": [1, 2],
+  "metaOptionId": 9
 }
