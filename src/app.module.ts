@@ -9,7 +9,7 @@ import { UsersModule } from './users/users.module';
 /**
  * Importing Entities
  * */
-import { User } from './users/user.entity';
+// import { User } from './users/user.entity';
 import { TagsModule } from './tags/tags.module';
 import { MetaOptionsModule } from './meta-options/meta-options.module';
 
@@ -23,7 +23,8 @@ import { MetaOptionsModule } from './meta-options/meta-options.module';
       inject: [],
       useFactory: () => ({
         type: 'postgres',
-        entities: [User],
+        // entities: [User],
+        autoLoadEntities: true,
         synchronize: true,
         port: 5432,
         username: 'postgres',

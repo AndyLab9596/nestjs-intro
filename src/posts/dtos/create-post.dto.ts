@@ -8,14 +8,14 @@ import {
   IsOptional,
   IsString,
   IsUrl,
-  Matches, MaxLength,
-  Min,
+  Matches,
+  MaxLength,
   MinLength,
-  ValidateNested
-} from "class-validator";
+  ValidateNested,
+} from 'class-validator';
 
-import { CreatePostMetaOptionsDto } from './create-post-meta-options.dto';
 import { Type } from 'class-transformer';
+import { CreatePostMetaOptionsDto } from '../../meta-options/dtos/create-post-meta-options.dto';
 import { postStatus } from '../enums/postStatus.enum';
 import { postType } from '../enums/postType.enum';
 
