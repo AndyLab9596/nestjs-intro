@@ -1,5 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/providers/users.service';
+import { CreatePostDto } from '../dtos/create-post.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Post } from '../post.entity';
 
 @Injectable()
 export class PostsService {
@@ -8,7 +12,17 @@ export class PostsService {
      * Injecting Users Service
      */
     private readonly usersService: UsersService,
+
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>,
   ) {}
+
+  public async create(@Body() createPostDto: CreatePostDto) {
+    // Create post
+    const post = this.postRepository.create(createPostDto);
+    // return the post to the user
+    return await this.postRepository.save(post);
+  }
 
   public findAll(userId: string) {
     const user = this.usersService.findOneById(userId);
