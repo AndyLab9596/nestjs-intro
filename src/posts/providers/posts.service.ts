@@ -32,7 +32,12 @@ export class PostsService {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async findAll(_userId: string) {
-    const posts = await this.postRepository.find();
+    const posts = await this.postRepository.find({
+      relations: {
+        metaOption: true,
+        author: true,
+      },
+    });
     return posts;
   }
 
