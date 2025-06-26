@@ -24,20 +24,9 @@ export class PostsService {
     return await this.postRepository.save(post);
   }
 
-  public findAll(userId: string) {
-    const user = this.usersService.findOneById(userId);
-
-    return [
-      {
-        user: user,
-        title: 'Test Tile',
-        content: 'Test Content',
-      },
-      {
-        user: user,
-        title: 'Test Tile 2',
-        content: 'Test Content 2',
-      },
-    ];
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async findAll(_userId: string) {
+    const posts = await this.postRepository.find();
+    return posts;
   }
 }

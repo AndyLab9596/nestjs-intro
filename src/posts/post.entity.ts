@@ -73,7 +73,7 @@ export class Post {
   // Work on these in lecture on relationships
   tags?: string[];
 
-  @OneToOne(() => MetaOption, { cascade: true })
+  @OneToOne(() => MetaOption, { cascade: true, eager: true })
   @JoinColumn()
   metaOption?: MetaOption; // metaOptionId
 }
