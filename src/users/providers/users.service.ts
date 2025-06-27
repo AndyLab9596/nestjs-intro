@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   HttpException,
   HttpStatus,
   Inject,
@@ -15,6 +14,7 @@ import { ConfigService, ConfigType } from '@nestjs/config';
 import profileConfig from '../config/profile.config';
 import { UsersCreateManyProvider } from './users-create-many.provider';
 import { CreateManyUsersDto } from '../dtos/create-many-users.dto';
+import { UserCreateProvider } from './user-create.provider';
 
 /**
  * Controller class for '/users' API endpoint
@@ -36,52 +36,11 @@ export class UsersService {
     private readonly dataSource: DataSource,
 
     private readonly usersCreateManyProvider: UsersCreateManyProvider,
+    private readonly userCreateProvider: UserCreateProvider,
   ) {}
 
   public async createUser(createUserDto: CreateUserDto) {
-    // Check if user with email exists
-    let existingUser: User;
-    try {
-      existingUser = await this.usersRepository.findOne({
-        where: { email: createUserDto.email },
-      });
-    } catch (error) {
-      // might save the details of the exception
-      // information which is sensitive
-      throw new RequestTimeoutException(
-        'Unable to process your request at the moment try later',
-        {
-          description: 'Error connecting to db',
-        },
-      );
-    }
-
-    if (existingUser) {
-      throw new BadRequestException(
-        'The use already exists, please check you email',
-      );
-    }
-
-    /**
-     * Handle exceptions if user exists later
-     * */
-
-    // Try to create a new user
-    // - Handle Exceptions Later
-    let newUser = this.usersRepository.create(createUserDto);
-    try {
-      newUser = await this.usersRepository.save(newUser);
-    } catch (error) {
-      throw new RequestTimeoutException(
-        'Unable to process your request at the moment try later',
-        {
-          description: 'Error connecting to db',
-        },
-      );
-    }
-
-    // Create the user
-    return newUser;
+    return await this.userCreateProvider.createUser(createUserDto);
   }
 
   /**
