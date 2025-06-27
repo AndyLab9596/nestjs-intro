@@ -1,1 +1,6 @@
+
 GET  http://localhost:3000/posts/1234
+  ?startDate="Fri Jun 27 2025 11:03:53 GMT+0700 (Indochina Time)"
+  &endDate="Fri Jun 27 2025 11:03:53 GMT+0700 (Indochina Time)"
+  &limit=2
+  &page=1
