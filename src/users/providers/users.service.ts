@@ -1,13 +1,11 @@
-import { GetUsersParamDto } from '../dtos/get-users-param.dto';
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
-import { User } from '../user.entity';
-import { Repository } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from '../dtos/create-user.dto';
+import { GetUsersParamDto } from '../dtos/get-users-param.dto';
+import { User } from '../user.entity';
+import { ConfigService, ConfigType } from '@nestjs/config';
+import profileConfig from '../config/profile.config';
 
 /**
  * Controller class for '/users' API endpoint
@@ -20,6 +18,11 @@ export class UsersService {
      * */
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+
+    private readonly configService: ConfigService,
+
+    @Inject(profileConfig.KEY)
+    private readonly profileConfiguration: ConfigType<typeof profileConfig>,
   ) {}
 
   public async createUser(createUserDto: CreateUserDto) {
@@ -49,6 +52,10 @@ export class UsersService {
     limt: number,
     page: number,
   ) {
+    const environment = this.configService.get('S3_BUCKET');
+    console.log(environment);
+
+    console.log(this.profileConfiguration);
     return [
       {
         firstName: 'John',
