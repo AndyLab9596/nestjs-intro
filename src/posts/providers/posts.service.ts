@@ -1,4 +1,9 @@
-import { Body, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Injectable,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/providers/users.service';
 import { CreatePostDto } from '../dtos/create-post.dto';
 import { Repository } from 'typeorm';
@@ -7,6 +12,7 @@ import { Post } from '../post.entity';
 import { MetaOption } from 'src/meta-options/meta-option.entity';
 import { TagsService } from 'src/tags/providers/tags.service';
 import { PatchPostDto } from '../dtos/patch-post.dto';
+import { Tag } from 'src/tags/tag.entity';
 
 @Injectable()
 export class PostsService {
@@ -58,13 +64,33 @@ export class PostsService {
   }
 
   public async update(patchPostDto: PatchPostDto) {
-    const tagToBeUpdated = await this.tagsService.findMultipleTags(
-      patchPostDto.tags,
-    );
+    let tagToBeUpdated: Tag[] = [];
+    try {
+      tagToBeUpdated = await this.tagsService.findMultipleTags(
+        patchPostDto.tags,
+      );
+    } catch (error) {
+      throw new RequestTimeoutException(error?.message);
+    }
 
-    const foundPost = await this.postRepository.findOneBy({
-      id: patchPostDto.id,
-    });
+    if (!tagToBeUpdated || tagToBeUpdated.length !== patchPostDto.tags.length) {
+      throw new BadRequestException(
+        'please check you tag Ids and ensure they are correct',
+      );
+    }
+
+    let foundPost: Post;
+    try {
+      foundPost = await this.postRepository.findOneBy({
+        id: patchPostDto.id,
+      });
+    } catch (error) {
+      throw new RequestTimeoutException(error?.message);
+    }
+
+    if (foundPost) {
+      throw new BadRequestException('The post ID does not exist');
+    }
 
     // const metaOptionToBeUpdated = await this.metaOptionRepository.findOneBy({
     //   id: patchPostDto.metaOptionId,
@@ -86,8 +112,11 @@ export class PostsService {
     //   // metaOption: metaOptionToBeUpdated,
     // });
 
-    const postUpdated = this.postRepository.save(foundPost);
-
-    return postUpdated;
+    try {
+      const postUpdated = this.postRepository.save(foundPost);
+      return postUpdated;
+    } catch (error) {
+      throw new RequestTimeoutException(error.message);
+    }
   }
 }
