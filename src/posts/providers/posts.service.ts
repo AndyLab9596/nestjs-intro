@@ -16,6 +16,8 @@ import { Tag } from 'src/tags/tag.entity';
 import { GetPostsDto } from '../dtos/get-post.dto';
 import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
 import { Paginated } from 'src/common/pagination/interfaces/paginated.interface';
+import { CreatePostProvider } from './create-post.provider';
+import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 
 @Injectable()
 export class PostsService {
@@ -26,6 +28,7 @@ export class PostsService {
     private readonly usersService: UsersService,
     private readonly tagsService: TagsService,
     private readonly paginationProvider: PaginationProvider,
+    private readonly createPostProvider: CreatePostProvider,
 
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
@@ -34,14 +37,11 @@ export class PostsService {
     private readonly metaOptionRepository: Repository<MetaOption>,
   ) {}
 
-  public async create(@Body() createPostDto: CreatePostDto) {
-    // Find author from database based on authorId
-    const author = await this.usersService.findOneById(createPostDto.authorId);
-    const tags = await this.tagsService.findMultipleTags(createPostDto.tags);
-    // Create post
-    const post = this.postRepository.create({ ...createPostDto, author, tags });
-    // return the post to the user
-    return await this.postRepository.save(post);
+  public async create(
+    @Body() createPostDto: CreatePostDto,
+    user: ActiveUserData,
+  ) {
+    await this.createPostProvider.create(createPostDto, user);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
